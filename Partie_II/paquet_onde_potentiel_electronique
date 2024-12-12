@@ -1,0 +1,87 @@
+'''Dans ce programme, on résout l'équation de Schrödinger par la méthode de Runge Kutta d'ordre 4
+La dérivé temporelle de la fonction d'onde est contenu dans l'Hamiltonien
+En discrétisant l'espace et le temps, on obtient une équation différentielle
+La dérivé temporelle de la fonction au rend n+1 est calculé par la fonction deriv
+Cette méthode etant plus performante, on calculera aussi l'evolution de la probabilité de présence d'une paquet d'onde gaussien'''
+
+'''On importe les bibliothèques nécessaires'''''
+
+import matplotlib
+matplotlib.use('Agg')  # Utilise un backend non interactif (pour enregistrer des figures)
+
+
+# from resol import *
+# from matplotlib.animation import FuncAnimation
+# from rk4 import * 
+# from potentiels import * 
+# from deriv import *
+# import matplotlib.animation as animation
+
+# '''On définit les variables nécessaires'''
+# n_espace, n_temps, debut, fin, L= 100,10000, 0, 1,  10
+# x = np.linspace(-L/2, L/2, n_espace)
+# sigma,k0, x0 = 0.5, 1e10, 0
+
+
+
+# #x,w, v= resol(L,n_espace, double_puits_de_potentiel, Norm = True)
+# y1 = gauss(x, x0, sigma, k0)
+# params = [L/n_espace, potentiel_electronique(x)] 
+# res1 = RK4(deriv, debut, fin, n_temps, y1, params = params)
+
+
+# plt.figure()
+# for i in range(10):
+#     plt.subplot(2,5, i +1)
+#     plt.plot(x, res1[int(i*(n_temps/10))])
+# #plt.savefig("Dynamique_Paquet_Onde_Potentiel_Electronique_potentiel_plus_bas.png")
+# plt.show()
+# plt.close()
+
+# pos_moyenne = []
+# for i in range(n_temps) :
+#     pos_moyenne += [np.sum((np.abs(res1[i])**2) * x)]
+# plt.figure()
+# plt.plot(range(n_temps), pos_moyenne)
+# #plt.savefig("Position_Moyenne_Paquet_Onde_Potentiel_Harmonique.png")
+# plt.show()
+# plt.plot()
+
+from resol import *
+from matplotlib.animation import FuncAnimation
+from rk4 import *
+from potentiels import *
+from deriv import *
+import matplotlib.animation as animation
+
+'''We define the necessary variables'''
+n_espace, n_temps, debut, fin, L = 100, 10000, 0, 1, 10
+x = np.linspace(-L/2, L/2, n_espace)
+sigma, k0, x0 = 0.5, 1e10, 0
+
+# x, w, v = resol(L, n_espace, double_puits_de_potentiel, Norm=True)
+y1 = gauss(x, x0, sigma, k0)
+params = [L/n_espace, potentiel_electronique(x)]
+res1 = RK4(deriv, debut, fin, n_temps, y1, params=params)
+
+plt.figure(figsize=(15, 9))
+for i in range(10):
+    plt.subplot(2, 5, i + 1)
+    plt.plot(x, np.abs(res1[int(i * (n_temps / 10))])**2)
+    plt.scatter(np.linspace(-6,6,10), np.linspace(-6,6,10)*0, label = "nucleus")
+    plt.xlabel("x (nm)")
+    plt.ylabel("Probability Density")
+plt.savefig("Dynamique_Paquet_Onde_Potentiel_Electronique_potentiel_plus_bas.png")
+plt.show()
+plt.close()
+
+pos_moyenne = []
+for i in range(n_temps):
+    pos_moyenne.append(np.sum((np.abs(res1[i])**2) * x))
+plt.figure(figsize=(15, 9))
+plt.plot(range(n_temps), pos_moyenne)
+plt.xlabel("Time Step")
+plt.ylabel("Average Position (nm)")
+plt.savefig("Position_Moyenne_Paquet_Onde_Potentiel_Electronique.png")
+plt.show()
+plt.close()
